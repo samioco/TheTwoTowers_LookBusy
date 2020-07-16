@@ -1,4 +1,4 @@
-#CLASS 0
+//RESET_LookBusySettings#CLASS 0#AL RESET_LookBusySettings {#CLASS 0
 $Settings = "Tools|LookBusy|Settings"
 #VAR LookBusyTimer {} {} VAR
 #VAR WhoList {} {} VAR
@@ -64,4 +64,4 @@ $semoteType=%random(0,2)
 #VAR SemotesTargeted {";)|?|ak|ack|admire|adore|agree|ah|ahh|ahoy|akiss|apologize|applaud|arc|arg|aww|aye|babble|back|bah|bang|bap|barf|~bark|bat|bd|beam|bear|beat|beckon|beg|bite|blah|blame|blech|blink|blush|boggle|bonk|boo|boogie|boot|bounce|bow|brag|bugger|burble|burp|cackle|caress|cheer|chew|chortle|chuckle|clap|clasp|claw|clench|cluck|comfort|cookie|cool|cough|cover|cower|crack|cream|cringe|croon|cross|cry|cuddle|curse|curtsey|dance|disagree|dismiss|distract|dive|doh|doubt|drool|dtango|duck|duh|eek|eep|egiggle|egrin|eh|embrace|err|ergh|erm|eww|facepalm|faint|fall|fan|fart|fclap|mercy|nibble|nuzzle|pounce|prod|squeeze|thank"} {} VAR
 
 
-#CLASS 0
+#CLASS 0} _LookBusy#CLASS 0
