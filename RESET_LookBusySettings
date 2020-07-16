@@ -1,0 +1,67 @@
+#CLASS 0
+$Settings = "Tools|LookBusy|Settings"
+#VAR LookBusyTimer {} {} VAR
+#VAR WhoList {} {} VAR
+#VAR WhoHere {} {} VAR
+#VAR WhoListLegendFlag {} {} VAR
+#VAR WhoListFindFlag {} {} VAR
+#VAR HelpTopics {"topics"} {} VAR
+
+#VAR LookBusyRandomCmds {"who demonic and shadowspawn|i|i|i|legend me|score|score|whoa ll|glance|glance|daytime|skills|uptime"} {} VAR
+
+#TR WhoList {^%1 the {@races}*%s~({"free|evil|guildmaster"}~)} {
+#ADDI WhoList %word(%1,1)
+} $Settings
+
+#TR WhoListTotalUsers {^Total users: %d} {
+#T- WhoList
+#T- WhoListTotalUsers
+SysMsg Disabling WhoList / WhoListTotalUsers
+#IF (@WhoListLegendFlag) {LegendPeople}
+#IF (@WhoListFindFlag) {FindPeople}
+} $Settings
+
+#TR WhoHere {^ %1 the {@races}} {
+#T- WhoHere
+#ADDI WhoHere %word(%1,1)
+$NotAGod=""
+#FORALL @WhoHere {#IF (!%ismember(%i,@ProfileGods)) {#ADDI $NotAGod %i}}
+#FORALL $NotAGod {#DELI WhoHere %i}
+#ECHO WhoHere: @WhoHere
+
+$timer=@LookBusyTimer
+$timerDiv25 = $timer/4
+$timer = %random(3,10)
+$target = %lower(%item(@WhoHere,%random(1,%numitems(@WhoHere))))
+$semote = %item(@Semotes,%random(1,%numitems(@Semotes)))
+$semoteTargeted = %item(@SemotesTargeted,%random(1,%numitems(@SemotesTargeted)))
+$EXE=""
+$semoteType=%random(0,2)
+
+#SW ($target && $semoteTargeted && $semoteType) {
+  $EXE = %concat($semoteTargeted," ",$target)
+} ($target && $semote) {
+  $EXE = $semote
+}
+
+#ECHO Semote: $EXE
+#IF ($EXE) {
+  #ALA "RandomSemotesEXE" +$timer {$EXE} $Settings
+}
+
+} $Settings
+
+#TR MoreTopics {^See also: (*)} {CleanHelpTopicsList %0} $Settings
+#TR StoreTopics {^%s(*)} {CleanHelpTopicsList %0} $Settings
+#TR ReadHelpNoTopic {^There is no help for} {ReadNextHelpTopic} $Settings
+
+#TR MoreContinue {^--More--} {#CR} $Settings
+
+#T- $Settings
+
+#VAR Semotes {";)|?|achoo|ack|afk2gab|afk2p|afk2p&gab|afk2smoke|agree|ah|ahh|ahoy|apologize|applaud|arc|arg|avert|aww|aye|babble|back|bah|bang|barf|~bark|bat|battlecry|bbiab|beam|~beep|belch|bite|blah|blame|blame Trump|blame you for sucking|blech|blink|blush|boggle|bonk|boo|boogie|boot|bounce|bow|brag|brb|bugger|burble|burp|cackle|chant|cheer|chew|chortle|chuckle|clap|claw|clench|cluck|clutch|comfort|cool|cough|cower|crack|cringe|croon|cross|cry|cul8r|curse|curtsey|dance|daze|disagree|dismiss|dive|doh|doubt|drool|duck|duh|eek|eep|egiggle|egrin|eh|embrace|err|ergh|erm|eww|facepalm|faint|fall|fart|fdl|fhug|fidget|fish|fist|fkiss|flail|flex|flip|flirt|flog|flop|footsie|frin|frolic|froth|frown|ftl|ftw|funky|furrow|gag|gah|gasp|gd|gesture|ghug|giggle|girn|gj|glare|gnash|gnaw|gobble|goose|greet|grimace|grin|gringrin|grni|groan|grok|groove|groovy|grovel|growl|grr|grumble|grump|grunt|gulp|gwave|hah|haha|hand|hang|headhold|heehee|heh|hello|heya|hiccup|high|hiss|hkiss|hmm|hmph|hold|hoom|hop|hotfoot|howdy|howl|hrm|hug|huggle|huh|hum|hush|hustle|huzzah|ick|idle|iknow|imho|imo|jab|jig|jk|jump|kick|kiss|knee|kneel|konk|kowtow|lag|lambada|laugh|laughw|lean|leer|lick|listen|lkiss|lol|lolly|love|mark|massage|meep|meh|melt|meow|mface|mgiggle|mglint|mgrin|miscomm|miss|missed|mmm|moan|mock|moo|mope|mosh|moving|mumble|nag|nah|narrow|ni|nkiss|nlick|nm|nod|nodnod|noise|nolag|np|nudge|oh|ohmy|oif|oink|ok|ooh|ook|oops|ouch|pace|page|panic|pant|pass|passout|pat|peep|peer|pester|pet|pillow|pinch|ping|plaugh|point|poke|ponder|pong|pout|praise|prance|preen|psha|ptip|puke|pummel|purr|quack|raise|rawr|rbow|rcurtsey|refuse|relax|rhand|rhug|rkiss|rlick|roar|roll|rotfl|rshake|rub|ruffle|rule|salute|sayto|scoff|scold|scowl|scratch|scream|screech|sdance|sface|shake|sheep|shh|shiver|shoo|shove|shriek|shrink|shrug|shudder|sidle|sigh|silly|sing|singto|skip|slap|slobber|slug|slump|smack|smiel|smile|smirk|smooch|snap|snarl|sneer|sneeze|snicker|sniff|sniffle|snore|snort|snuggle|sob|spank|spin|spit|squeak|squeal|squirm|stagger|stamp|stare|stifle|stomp|strangle|stretch|strip|strut|stumble|sulk|swat|sway|swear|sweat|sweet|swoon|tackle|tango|tap|taunt|tease|teehee|tellhell|tender|think|thnkain|thnkval|throttle|thumb|thump|thwack|thwap|tickle|tilt|tip|tja|tongue|toot|toss|tremble|trip|tsk|ttyl|tug|twiddle|twitch|ugh|uh|uhoh|vshake|wag|waggle|wait|warm|wave|wazza|wb|wedgie|weep|wet|whatever|whee|whew|whimper|whine|whistle|whoops|wiggle|wince|wink|wipe|wobble|woh|womble|woo|woohoo|woot|worry|worship|wrap|wrestle|wrinkle|wtg|wuv|yawn|yay|yo|yuckgrim|yum|yun|zip"} {} VAR
+
+#VAR SemotesTargeted {";)|?|ak|ack|admire|adore|agree|ah|ahh|ahoy|akiss|apologize|applaud|arc|arg|aww|aye|babble|back|bah|bang|bap|barf|~bark|bat|bd|beam|bear|beat|beckon|beg|bite|blah|blame|blech|blink|blush|boggle|bonk|boo|boogie|boot|bounce|bow|brag|bugger|burble|burp|cackle|caress|cheer|chew|chortle|chuckle|clap|clasp|claw|clench|cluck|comfort|cookie|cool|cough|cover|cower|crack|cream|cringe|croon|cross|cry|cuddle|curse|curtsey|dance|disagree|dismiss|distract|dive|doh|doubt|drool|dtango|duck|duh|eek|eep|egiggle|egrin|eh|embrace|err|ergh|erm|eww|facepalm|faint|fall|fan|fart|fclap|mercy|nibble|nuzzle|pounce|prod|squeeze|thank"} {} VAR
+
+
+#CLASS 0
