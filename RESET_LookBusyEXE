@@ -1,0 +1,204 @@
+#CLASS 0
+$CLASS = "Tools|LookBusy|EXE"
+$Settings = "Tools|LookBusy|Settings"
+
+#AL LookBusy {
+RESET_LookBusy_Settings
+ClassOn LookBusy
+#SW (%isnumber(%0)) {#VAR LookBusyTimer {%number(%0)} {} VAR
+} (!@LookBusyTimer) {#VAR LookBusyTimer {500} {} VAR}
+$timer=@LookBusyTimer
+#IF (%isnumber(%0)) {$timer=%number(%0)}
+#VAR LookBusyTimer {$timer} {} VAR
+LookBusySetAlarm RandomCmds
+LookBusySetAlarm WhoAll
+LookBusySetAlarm WhoProfession
+LookBusySetAlarm CheckWhoHere
+LookBusySetAlarm RandomSemotes
+#TI off {LookBusy @LookBusyTimer}
+#TS @LookBusyTimer
+} $CLASS
+
+#AL LookBusySetAlarm {
+//param: Executable
+$EXE = %0
+$timer=@LookBusyTimer
+$timerDiv25 = $timer/4
+$timerDiv50 = $timer/2
+$timerDiv75 = $timer*3/4
+$alarmWait=%random($timerDiv50,$timerDiv75)
+SysMsg $EXE in +$alarmWait secs
+#ALA $EXE +$alarmWait {$EXE} $Settings
+} $CLASS
+
+#AL WhoAll {
+#VAR WhoListLegendFlag {1} {} VAR
+ClassOn LookBusy
+#UNT "WhoAll"
+SysMsg Executing: WhoAll
+#VAR WhoList {} {} VAR
+#T+ WhoList
+#T+ WhoListTotalUsers
+who all
+LookBusySetAlarm WhoAll
+} $CLASS
+
+#AL RandomFinds {
+#VAR WhoListFindFlag {1} {} VAR
+ClassOn LookBUsy
+#UNT "RandomFinds"
+#SW (%isnumber(%0)) {#VAR LookBusyTimer {%number(%0)} {} VAR
+} (!@LookBusyTimer) {#VAR LookBusyTimer {500} {} VAR}
+SysMsg Executing: RandomFinds
+WhoAll
+LookBusySetAlarm RandomFinds
+} $CLASS
+
+
+#AL FindPeople {
+$numEXE=%random(2,5)
+$alarmWait = 0
+$target = ""
+$timer=@LookBusyTimer
+$timerDiv25 = $timer/4
+$timerDiv50 = $timer/2
+$timerDiv75 = $timer*3/4
+#LOOP $numEXE {
+  $alarmWait = %random(5,$timerDiv25)
+  $target = %lower(%item(@WhoList,%random(1,%numitems(@WhoList))))
+  #ALA %concat("Find",%i) +$alarmWait {
+    legend $target
+    #WAIT %random(1,3)*1000
+    find $target
+  } $Settings
+}
+} $CLASS
+
+#AL LegendPeople {
+$numEXE=%random(2,7)
+$wait = 0
+$target = ""
+$timer=@LookBusyTimer
+$timerDiv25 = $timer/4
+$timerDiv50 = $timer/2
+$timerDiv75 = $timer*3/4
+#LOOP $numEXE {
+  $wait = %random(3,$timerDiv25)
+  $target = %lower(%item(@WhoList,%random(1,%numitems(@WhoList))))
+  #ALA %concat("Legend",%i) +$wait {legend $target} $Settings
+}
+} $CLASS
+
+
+
+#AL WhoProfession {
+ClassOn LookBusy
+#UNT "WhoProfession"
+$professionList=@Professions
+#DELI $professionList "civilian"
+#DELI $professionList "minion"
+$profession = %item($professionList,%random(1,%numitems($professionList)))
+SysMsg Executing WhoProfession: who $profession
+who $profession
+LookBusySetAlarm WhoProfession
+} $CLASS
+
+
+
+#AL CheckWhoHere {
+ClassOn LookBusy
+#UNT "CheckWhoHere"
+#VAR WhoHere {} {} VAR
+#T+ WhoHere
+glance
+#ALA "CheckWhoHere" +3 {#T- WhoHere} $Settings
+LookBusySetAlarm CheckWhoHere
+} $CLASS
+
+
+#AL RandomCmds {
+ClassOn LookBusy
+#UNT "RandomCmds"
+$EXE = %item(@LookBusyRandomCmds,%random(1,%numitems(@LookBusyRandomCmds)))
+SysMsg Executing LookBusyRandomCmdsEXE: $EXE
+#EXE {$EXE}
+LookBusySetAlarm RandomCmds
+} $CLASS
+
+
+#AL RandomSemotes {
+ClassOn LookBusy
+#UNT "RandomSemotes"
+#UNT "RandomSemotesEXE"
+SysMsg Executing RandomSemotes
+CheckWhoHere
+LookBusySetAlarm RandomSemotes
+} $CLASS
+
+
+#AL ReadRandomHelpFiles {
+ClassOn LookBusy
+#T+ MoreTopics
+#T+ MoreContinue
+#T+ ReadHelpNoTopic
+#T- StoreTopics
+#VAR HelpTopics {"topics"} {} VAR
+#EXE {help %item(@HelpTopics,%random(1,%numitems(@HelpTopics)))}
+#ALA +1 {#CR}
+ReadNextHelpTopic
+#TI off {ReadNextHelpTopic}
+#TS 30
+} $CLASS
+
+#AL ReadNextHelpTopic {
+ClassOn LookBusy
+$helpTopic = %item(@HelpTopics,%random(1,%numitems(@HelpTopics)))
+#ALA "NextHelpTopic" +%random(30,60) {
+  #EXE {help $helpTopic}
+  ReadNextHelpTopic
+} $Settings
+$profession=%item(@Professions,%random(1,%numitems(@Professions)))
+$EXE = %concat("help title.",$profession)
+#ALA "HelpTitleProfession" +%random(30,60) {$EXE} $Settings
+} $CLASS
+
+#AL CleanHelpTopicsList {
+$topics=""
+$topics=%0
+#IF (%rightback($topics,1)=",") {#T+ StoreTopics} {#T- StoreTopics}
+$topics=%replace($topics,", ","|")
+$topics=%replace($topics,",","")
+#IF (%left($topics,1)="|") {$topics=%copy($topics,2)}
+#IF (%rightback($topics,1)="|") {$topics=%copy($topics,1,%len($topics)-1)}
+#IF (!@HelpTopics) {
+  #VAR HelpTopics {$topics} {} VAR
+} {
+  #FORALL $topics {#ADDI HelpTopics %trim(%i)}
+}
+} $CLASS
+
+#AL StopBusy {
+#VAR WhoListLegendFlag {} {} VAR
+#VAR WhoListFindFlag {} {} VAR
+#TI off
+#UNT WhoAll
+#UNT RandomCmds
+#UNT RandomFinds
+#UNT RandomSemote
+#UNT WhoProfession
+#UNT CheckWhoHere
+#UNT NextHelpTopic
+#UNT HelpTitleProfession
+#T- $Settings
+#T- WhoList
+#T- WhoListTotalUsers
+#T- WhoHere
+#T- MoreContinue
+#T- MoreTopics
+#T- StoreTopics
+#T- ReadHelpNoTopic
+SysMsg LookBusy Stopped.
+ClassOff LookBusy
+} $CLASS
+
+#CLASS 0
